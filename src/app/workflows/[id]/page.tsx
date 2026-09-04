@@ -9,7 +9,7 @@ export default async function WorkflowPage({ params }: { params: Promise<{ id: s
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/signin");
 
   const { data, error } = await supabase
     .from("workflows")

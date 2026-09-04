@@ -1,0 +1,93 @@
+"use client";
+
+import { Suspense, useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { GoogleAuthButton } from "@/components/google-auth-button";
+
+function SignInForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") || "/dashboard";
+  const oauthError = searchParams.get("error");
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(
+    oauthError ? "Google sign-in failed. Please try again." : null
+  );
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (error) {
+      setError(error.message);
+      return;
+    }
+    router.push(next);
+    router.refresh();
+  }
+
+  return (
+    <div className="w-full max-w-sm space-y-6">
+      <div className="text-center">
+        <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
+        <p className="mt-1 text-sm text-muted">Describe it. We automate it.</p>
+      </div>
+
+      <GoogleAuthButton next={next} />
+
+      <div className="flex items-center gap-3 text-xs text-muted">
+        <div className="h-px flex-1 bg-border" />
+        or
+        <div className="h-px flex-1 bg-border" />
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <Input
+          type="email"
+          placeholder="Email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Input
+          type="password"
+          placeholder="Password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        {error && <p className="text-sm text-red-400">{error}</p>}
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Signing in…" : "Sign in"}
+        </Button>
+      </form>
+
+      <p className="text-center text-sm text-muted">
+        Need an account?{" "}
+        <Link href="/signup" className="text-foreground hover:underline">
+          Sign up
+        </Link>
+      </p>
+    </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <div className="flex flex-1 items-center justify-center px-6 py-16">
+      <Suspense fallback={null}>
+        <SignInForm />
+      </Suspense>
+    </div>
+  );
+}

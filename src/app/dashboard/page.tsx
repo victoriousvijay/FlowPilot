@@ -9,7 +9,7 @@ export default async function DashboardPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/signin");
 
   const { data: workflows } = await supabase
     .from("workflows")
@@ -21,7 +21,7 @@ export default async function DashboardPage() {
     <div className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Your automations</h1>
-        <Link href="/">
+        <Link href="/new">
           <Button>New automation</Button>
         </Link>
       </div>

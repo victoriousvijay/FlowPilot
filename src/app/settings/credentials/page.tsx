@@ -7,7 +7,7 @@ export default async function CredentialsPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/signin");
 
   const { data: credentials } = await supabase
     .from("credentials")

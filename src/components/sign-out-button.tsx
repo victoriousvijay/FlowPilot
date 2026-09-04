@@ -13,7 +13,7 @@ export function SignOutButton() {
       onClick={async () => {
         const supabase = createClient();
         await supabase.auth.signOut();
-        router.push("/login");
+        router.push("/signin");
         router.refresh();
       }}
     >
