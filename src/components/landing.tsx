@@ -28,7 +28,7 @@ const MOCK_NODES = [
 
 function MockCanvas() {
   return (
-    <div className="relative mx-auto mt-14 w-full max-w-md">
+    <div className="relative mx-auto mt-16 w-full max-w-md">
       <div className="flex flex-col items-center gap-3">
         {MOCK_NODES.map((node, i) => (
           <motion.div
@@ -38,7 +38,10 @@ function MockCanvas() {
             transition={{ delay: 0.15 * i, duration: 0.4, ease: "easeOut" }}
             className="w-full"
           >
-            <div className="glass-card animate-float-slow rounded-xl px-4 py-3 shadow-lg" style={{ animationDelay: `${i * 0.4}s` }}>
+            <div
+              className="glass-card animate-float-slow rounded-xl px-4 py-3 shadow-lg"
+              style={{ animationDelay: `${i * 0.4}s` }}
+            >
               <div className="text-[10px] uppercase tracking-wide text-muted">
                 {i === 0 ? "Trigger" : "Action"}
               </div>
@@ -67,14 +70,15 @@ export function LandingHero({
   loggedIn: boolean;
 }) {
   return (
-    <section className="relative overflow-hidden px-6 pt-24 pb-16">
+    <section className="relative overflow-hidden px-6 pt-28 pb-20">
+      <div className="starfield" />
       <div className="hero-backdrop" />
       <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
-          className="text-sm font-medium text-accent"
+          className="rounded-full border border-border bg-surface/60 px-3 py-1 text-xs font-medium text-accent"
         >
           AI-first automation
         </motion.p>
@@ -82,15 +86,17 @@ export function LandingHero({
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.05 }}
-          className="text-gradient mt-3 max-w-2xl text-4xl font-semibold tracking-tight sm:text-6xl"
+          className="text-gradient mt-5 max-w-3xl text-5xl font-semibold tracking-tight sm:text-7xl"
         >
-          Describe it. We automate it.
+          Describe it.
+          <br />
+          We automate it.
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="mt-4 max-w-xl text-muted"
+          className="mt-5 max-w-xl text-lg text-muted"
         >
           Turn a plain-language instruction into a validated, visual, executable workflow —
           no nodes to learn, no code to write.
@@ -105,9 +111,9 @@ export function LandingHero({
             <Button size="lg">{primaryLabel}</Button>
           </Link>
           {!loggedIn && (
-            <Link href="/signin">
+            <Link href="#how-it-works">
               <Button size="lg" variant="secondary">
-                Sign in
+                See how it works
               </Button>
             </Link>
           )}
@@ -116,7 +122,7 @@ export function LandingHero({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-4 max-w-lg text-xs text-muted"
+          className="mt-5 max-w-lg text-xs text-muted"
         >
           e.g. &ldquo;Whenever I receive a new customer email, summarize it with AI, add the
           summary to Google Sheets, and notify Slack.&rdquo;
@@ -130,7 +136,7 @@ export function LandingHero({
 
 export function LandingSteps() {
   return (
-    <section className="border-y border-border bg-surface/40 py-16">
+    <section id="how-it-works" className="border-y border-border bg-surface/40 py-16 scroll-mt-14">
       <div className="mx-auto max-w-4xl px-6">
         <h2 className="text-center text-sm font-medium uppercase tracking-wide text-muted">
           How it works
@@ -157,25 +163,23 @@ export function LandingSteps() {
 }
 
 export function LandingIntegrations({ labels }: { labels: string[] }) {
+  const loop = [...labels, ...labels];
   return (
-    <section className="mx-auto max-w-4xl px-6 py-16 text-center">
+    <section className="overflow-hidden py-16 text-center">
       <h2 className="text-sm font-medium uppercase tracking-wide text-muted">
         Connects with what you already use
       </h2>
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-        {labels.map((label, i) => (
-          <motion.span
-            key={label}
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.06, duration: 0.3 }}
-            whileHover={{ y: -2 }}
-            className="rounded-full border border-border bg-surface px-4 py-1.5 text-sm text-foreground transition-colors hover:border-accent/50"
-          >
-            {label}
-          </motion.span>
-        ))}
+      <div className="relative mt-6 mask-fade-x">
+        <div className="marquee-track gap-3">
+          {loop.map((label, i) => (
+            <span
+              key={`${label}-${i}`}
+              className="mx-1.5 shrink-0 rounded-full border border-border bg-surface px-4 py-1.5 text-sm text-foreground transition-colors hover:border-accent/50"
+            >
+              {label}
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -183,9 +187,10 @@ export function LandingIntegrations({ labels }: { labels: string[] }) {
 
 export function LandingCTA({ primaryHref, primaryLabel }: { primaryHref: string; primaryLabel: string }) {
   return (
-    <section className="relative overflow-hidden px-6 py-20 text-center">
-      <div className="mx-auto max-w-lg">
-        <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+    <section className="relative overflow-hidden px-6 py-24 text-center">
+      <div className="starfield" />
+      <div className="relative z-10 mx-auto max-w-lg">
+        <h2 className="text-2xl font-semibold tracking-tight sm:text-4xl">
           Go from idea to working automation in minutes.
         </h2>
         <div className="mt-8">
