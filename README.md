@@ -41,9 +41,20 @@ ANTHROPIC_API_KEY=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
+# 32-byte key, base64-encoded, used to encrypt stored integration credentials.
+# Generate with: openssl rand -base64 32
+CREDENTIALS_ENCRYPTION_KEY=
 ```
 
-Never commit `.env`, `.env.local`, or secrets.
+See `.env.example`. Never commit `.env`, `.env.local`, or secrets.
+
+## Getting started
+
+```bash
+npm install
+# apply supabase/migrations/0001_init.sql to your Supabase project
+npm run dev
+```
 
 ## Product positioning
 
