@@ -2,12 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/input";
 import { WorkflowCanvas } from "@/components/workflow-canvas";
 import type { Workflow } from "@/domain/workflow";
 
 type State = "idle" | "generating" | "generated" | "saving" | "error";
+
+const SUGGESTIONS = [
+  "Summarize new leads and post them to Slack",
+  "Log every new customer email to a Google Sheet",
+  "Classify support emails and notify Slack for urgent ones",
+  "Turn webhook form submissions into a Sheets row",
+];
 
 export function CreateAutomation() {
   const router = useRouter();
@@ -17,15 +25,16 @@ export function CreateAutomation() {
   const [warnings, setWarnings] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleGenerate() {
-    if (!prompt.trim()) return;
+  async function handleGenerate(promptOverride?: string) {
+    const value = promptOverride ?? prompt;
+    if (!value.trim()) return;
     setState("generating");
     setError(null);
     try {
       const res = await fetch("/api/workflows/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ prompt: value }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -65,30 +74,65 @@ export function CreateAutomation() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl flex-1 px-6 py-16">
-      <div className="text-center">
+    <div className="mx-auto w-full max-w-2xl flex-1 px-6 py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="text-center"
+      >
         <h1 className="text-3xl font-semibold tracking-tight">What do you want to automate?</h1>
         <p className="mt-2 text-muted">
           Describe the automation in plain language. We&apos;ll generate the workflow.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="mt-8 space-y-3">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.08 }}
+        className="card-elevated mt-8 rounded-2xl p-2"
+      >
         <Textarea
           rows={4}
+          className="border-0 bg-transparent focus:ring-0"
           placeholder="Whenever I receive a new customer email, summarize it with AI, add the summary to Google Sheets, and notify Slack."
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
         />
-        <div className="flex justify-center">
-          <Button onClick={handleGenerate} disabled={state === "generating" || !prompt.trim()}>
+        <div className="flex justify-end p-1">
+          <Button
+            onClick={() => handleGenerate()}
+            disabled={state === "generating" || !prompt.trim()}
+          >
             {state === "generating" ? "Generating…" : "Generate automation"}
           </Button>
         </div>
-      </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4, delay: 0.15 }}
+        className="mt-4 flex flex-wrap justify-center gap-2"
+      >
+        {SUGGESTIONS.map((s) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => {
+              setPrompt(s);
+              handleGenerate(s);
+            }}
+            className="rounded-full border border-border px-3 py-1.5 text-xs text-muted transition-colors hover:border-foreground/30 hover:text-foreground"
+          >
+            {s}
+          </button>
+        ))}
+      </motion.div>
 
       {error && (
-        <div className="mt-6 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+        <div className="mt-6 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-500">
           {error}
         </div>
       )}
@@ -105,7 +149,7 @@ export function CreateAutomation() {
             </Button>
           </div>
           {warnings.length > 0 && (
-            <ul className="rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+            <ul className="rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-600">
               {warnings.map((w, i) => (
                 <li key={i}>{w}</li>
               ))}
