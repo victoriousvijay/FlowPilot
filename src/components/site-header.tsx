@@ -10,9 +10,9 @@ export async function SiteHeader() {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="border-b border-border">
+    <header className="glass-card sticky top-0 z-50 border-x-0 border-t-0">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-        <Link href="/" className="font-semibold tracking-tight">
+        <Link href="/" className="text-gradient font-semibold tracking-tight">
           FlowPilot
         </Link>
         <nav className="flex items-center gap-5 text-sm text-muted">

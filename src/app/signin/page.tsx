@@ -3,10 +3,12 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GoogleAuthButton } from "@/components/google-auth-button";
+import { friendlyAuthError } from "@/lib/auth-errors";
 
 function SignInForm() {
   const router = useRouter();
@@ -29,7 +31,7 @@ function SignInForm() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
-      setError(error.message);
+      setError(friendlyAuthError(error.message));
       return;
     }
     router.push(next);
@@ -37,17 +39,24 @@ function SignInForm() {
   }
 
   return (
-    <div className="w-full max-w-sm space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="glass-card relative z-10 w-full max-w-sm rounded-2xl p-8 shadow-2xl"
+    >
       <div className="text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
         <p className="mt-1 text-sm text-muted">Describe it. We automate it.</p>
       </div>
 
-      <GoogleAuthButton next={next} />
+      <div className="mt-6">
+        <GoogleAuthButton next={next} />
+      </div>
 
-      <div className="flex items-center gap-3 text-xs text-muted">
+      <div className="my-5 flex items-center gap-3 text-xs text-muted">
         <div className="h-px flex-1 bg-border" />
-        or
+        or continue with email
         <div className="h-px flex-1 bg-border" />
       </div>
 
@@ -67,24 +76,25 @@ function SignInForm() {
           onChange={(e) => setPassword(e.target.value)}
         />
         {error && <p className="text-sm text-red-400">{error}</p>}
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button type="submit" size="lg" className="w-full" disabled={loading}>
           {loading ? "Signing in…" : "Sign in"}
         </Button>
       </form>
 
-      <p className="text-center text-sm text-muted">
+      <p className="mt-6 text-center text-sm text-muted">
         Need an account?{" "}
         <Link href="/signup" className="text-foreground hover:underline">
           Sign up
         </Link>
       </p>
-    </div>
+    </motion.div>
   );
 }
 
 export default function SignInPage() {
   return (
-    <div className="flex flex-1 items-center justify-center px-6 py-16">
+    <div className="relative flex flex-1 items-center justify-center overflow-hidden px-6 py-16">
+      <div className="hero-backdrop" />
       <Suspense fallback={null}>
         <SignInForm />
       </Suspense>

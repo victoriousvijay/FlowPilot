@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GoogleAuthButton } from "@/components/google-auth-button";
+import { friendlyAuthError } from "@/lib/auth-errors";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -32,7 +34,7 @@ export default function SignUpPage() {
 
     setLoading(false);
     if (error) {
-      setError(error.message);
+      setError(friendlyAuthError(error.message));
       return;
     }
 
@@ -46,18 +48,26 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center px-6 py-16">
-      <div className="w-full max-w-sm space-y-6">
+    <div className="relative flex flex-1 items-center justify-center overflow-hidden px-6 py-16">
+      <div className="hero-backdrop" />
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="glass-card relative z-10 w-full max-w-sm rounded-2xl p-8 shadow-2xl"
+      >
         <div className="text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Create your account</h1>
           <p className="mt-1 text-sm text-muted">Describe it. We automate it.</p>
         </div>
 
-        <GoogleAuthButton next="/dashboard" />
+        <div className="mt-6">
+          <GoogleAuthButton next="/dashboard" />
+        </div>
 
-        <div className="flex items-center gap-3 text-xs text-muted">
+        <div className="my-5 flex items-center gap-3 text-xs text-muted">
           <div className="h-px flex-1 bg-border" />
-          or
+          or continue with email
           <div className="h-px flex-1 bg-border" />
         </div>
 
@@ -80,18 +90,18 @@ export default function SignUpPage() {
           />
           {error && <p className="text-sm text-red-400">{error}</p>}
           {notice && <p className="text-sm text-emerald-400">{notice}</p>}
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" size="lg" className="w-full" disabled={loading}>
             {loading ? "Creating account…" : "Sign up"}
           </Button>
         </form>
 
-        <p className="text-center text-sm text-muted">
+        <p className="mt-6 text-center text-sm text-muted">
           Already have an account?{" "}
           <Link href="/signin" className="text-foreground hover:underline">
             Sign in
           </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }
