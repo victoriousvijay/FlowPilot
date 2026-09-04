@@ -10,12 +10,12 @@ export async function SiteHeader() {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="glass-card sticky top-0 z-50 border-x-0 border-t-0">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-        <Link href="/" className="text-gradient font-semibold tracking-tight">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+        <Link href="/" className="text-lg font-semibold tracking-tight">
           FlowPilot
         </Link>
-        <nav className="flex items-center gap-5 text-sm text-muted">
+        <nav className="flex items-center gap-6 text-sm text-muted">
           {user ? (
             <>
               <Link href="/dashboard" className="hover:text-foreground">
@@ -38,7 +38,7 @@ export async function SiteHeader() {
                 Sign in
               </Link>
               <Link href="/signup">
-                <Button size="sm">Sign up</Button>
+                <Button size="sm">Sign up for free</Button>
               </Link>
             </>
           )}

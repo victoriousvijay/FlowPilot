@@ -48,13 +48,12 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="relative flex flex-1 items-center justify-center overflow-hidden px-6 py-16">
-      <div className="hero-backdrop" />
+    <div className="flex flex-1 items-center justify-center bg-surface/40 px-6 py-16">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="glass-card relative z-10 w-full max-w-sm rounded-2xl p-8 shadow-2xl"
+        className="card-elevated w-full max-w-sm rounded-2xl p-8"
       >
         <div className="text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Create your account</h1>
